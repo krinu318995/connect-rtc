@@ -35,3 +35,14 @@ out/
 
 ### VS Code ###
 .vscode/
+application-secret.properties
+
+**/JasyptTest.java
+
+
+# IDE 설정
+.vscode/
+
+# 로컬 SSL 인증서 및 개인키
+*.pem
+*.p12

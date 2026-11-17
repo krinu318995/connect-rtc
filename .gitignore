@@ -1,0 +1,13 @@
+# IDE 설정
+.vscode/
+.idea/
+
+# 로컬 SSL 인증서 및 개인키
+*.pem
+*.p12
+
+# Frontend (Node / Vite / React)
+node_modules/
+dist/
+.env
+.env.local
