@@ -108,3 +108,45 @@ src/
 ├── hook/         # WebSocket 연결 및 RTCPeerConnection 수명주기를 캡슐화한 useWebRTC 커스텀 훅
 ├── page/         # AuthPage, LobbyPage, RoomPage 화면 컴포넌트
 └── types/        # 백엔드 DTO 및 시그널링 메시지 규격 타입 정의 (auth, room, signaling)
+
+---
+
+## 6. 단계별 구현 로드맵
+
+### Phase 1. 기본 인증 및 1:1 P2P 화상 통화 (완료)
+- [x] 회원가입 / 로그인 및 JWT 발급·저장 처리
+- [x] 라우트 가드(`PrivateRoute`, `PublicRoute`) 및 `replace` 히스토리 관리를 통한 로그아웃 후 뒤로가기 접근 차단
+- [x] 회의실 개설, 대기실 목록 조회, 입장·퇴장 REST API 연동
+- [x] STOMP 시그널링(`JOIN`, `OFFER`, `ANSWER`, `ICE`, `LEAVE`) 기반 1:1 P2P 영상·음성 스트림 연결
+- [x] 로컬 미디어 트랙 제어(마이크 음소거, 카메라 ON/OFF) 및 상대방 닉네임 동적 바인딩
+- [x] 다크 테마 기반 UI 계층화 및 커스텀 컴포넌트(스크롤 드롭다운, 플로팅 컨트롤 바) 구축
+
+### Phase 2. 실시간 상태 동기화 및 회의실 접근 제어 (진행 중)
+- [ ] **대기실 실시간 동기화:** `/sub/lobby` 토픽 구독을 통해 타 사용자의 입장·퇴장·방 생성·삭제 시 인원수 및 목록 즉시 갱신
+- [ ] **회의실 생명주기 정책 개편:** 참여 인원이 0명이 되어도 회의실을 유지하되, 개설자(`hostId`)만 회의실을 삭제할 수 있도록 권한 분리
+- [ ] **회의실 접근 제어(Protection):**
+  - `PUBLIC`: 로그인된 사용자 누구나 입장 가능
+  - `PASSWORD`: `BCrypt`로 암호화된 입장 비밀번호 검증 통과 시 입장
+  - `INVITE_ONLY`: 초대 이메일 화이트리스트 또는 발급된 초대 코드(`inviteCode`) 일치 시 입장
+- [ ] **실시간 텍스트 채팅:** 입장 인가 검증을 통과한 참여자 간의 STOMP 기반 실시간 채팅 채널(`/pub/chat/{roomId}`, `/sub/chat/{roomId}`) 확장
+
+---
+
+## 7. 주요 트러블슈팅 및 설계 의사결정 기록
+
+### 1. 회의실 입장·퇴장 시 로그인 화면(`/`)으로 리다이렉트되던 문제
+- **현상:** 대기실에서 회의실 입장을 누르거나 회의실에 진입한 직후 로그인 화면(`/`)으로 이동하는 현상이 발생했습니다.
+- **원인:**
+  1. `LobbyPage`와 `RoomPage`에서 `navigate("rooms/...")`, `navigate("lobby")`처럼 선행 슬래시(`/`)가 빠진 상대 경로를 사용하여 등록되지 않은 경로(`/lobby/rooms/...`)로 이동했고, 와일드카드 라우트(`path="*"`)에 의해 `/`로 리다이렉트되었습니다.
+  2. `RoomPage`의 회의 나가기 버튼에 클릭 이벤트(`onClick`) 대신 `onLoad` 속성이 잘못 바인딩되어 있었습니다.
+- **해결:** 모든 페이지 이동 경로를 절대 경로(`/rooms/${roomId}`, `/lobby`)로 수정하고 이벤트 핸들러를 `onClick`으로 교정했습니다.
+
+### 2. 다중 탭 P2P 테스트 시 세션 충돌 및 대기실 인원수 동기화 지연
+- **현상:** 동일 브라우저의 일반 탭 두 개로 각각 다른 계정에 로그인할 경우 시그널링 메시지 송신자(`senderId`)가 동일하게 인식되고, 한쪽에서 퇴장해도 다른 창의 대기실 참여 인원수가 즉시 줄어들지 않았습니다.
+- **원인:** 일반 탭 간 `localStorage`가 공유되어 후순위 로그인 토큰이 기존 세션을 덮어썼으며, 대기실이 초기 마운트 시점에만 REST API로 목록을 조회하는 구조였기 때문입니다.
+- **해결 및 개선 방향:** 독립 세션(시크릿 창) 환경에서 P2P 연결을 검증했으며, 추후 대기실이 STOMP `/sub/lobby` 이벤트를 구독해 상태 변경 시 목록을 즉시 재조회하도록 구조를 개선할 예정입니다. (Phase 2 반영 예정)
+
+### 3. `StompHandler` 컴파일 오류 및 잘못된 예외 클래스 참조
+- **현상:** WebSocket 연결 인터셉터 구현 시 `Unhandled exception type AccessDeniedException` 컴파일 에러가 발생했습니다.
+- **원인:** Spring Security의 런타임 예외(`org.springframework.security.access.AccessDeniedException`) 대신 파일 입출력용 Checked Exception(`java.nio.file.AccessDeniedException`)이 import 되어 있었습니다.
+- **해결:** Spring Security 패키지의 `AccessDeniedException`으로 import 경로를 수정하여 빌드 및 인증 예외 처리를 정상화했습니다.
