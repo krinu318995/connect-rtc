@@ -1,0 +1,69 @@
+# ConnectRTC — WebRTC 기반 실시간 화상회의 서비스
+
+> Spring Boot(WebSocket/STOMP) 시그널링 서버와 React(TypeScript)를 결합하여 구현한 실시간 P2P 화상회의 웹 애플리케이션입니다.
+
+- **개발 기간:** 2026.11 ~ 2026.11 (1인 개발)
+- **GitHub:** [리포지토리 링크]
+- **시연 영상 / 배포 링크:** [링크 또는 GIF 첨부]
+
+---
+
+## 1. 프로젝트 개요 및 기획 의도
+- HTTP 기반 REST API와 실시간 양방향 통신(WebSocket/STOMP), 브라우저 간 직접 미디어 스트림을 교환하는 WebRTC의 동작 원리를 통합적으로 설계하고 구현하기 위해 진행한 프로젝트입니다.
+- 중앙 미디어 서버 부하를 줄이는 P2P(Mesh) 구조를 채택하고, 시그널링 과정에서의 비인가 접근을 차단하기 위해 HTTP와 WebSocket 계층 모두에 JWT 인증을 적용했습니다.
+
+---
+
+## 2. 기술 스택
+
+### Backend
+- **Language & Framework:** Java 21, Spring Boot 4.1.2
+- **Security & Auth:** Spring Security, JWT (jjwt)
+- **Real-time Signaling:** Spring WebSocket, STOMP, SockJS
+- **Database & ORM:** MySQL, Spring Data JPA
+
+### Frontend
+- **Language & Framework:** TypeScript, React 19, Vite
+- **Networking & Media:** Axios, `@stomp/stompjs`, `sockjs-client`, WebRTC API
+- **Routing & Styling:** React Router, CSS (컴포넌트별 스타일시트 분리)
+
+---
+
+## 3. 시스템 아키텍처 및 핵심 동작 흐름
+
+*(여기에 시스템 아키텍처 다이어그램 이미지 삽입)*
+
+### 3-1. 이중 계층 JWT 인증 구조
+- **HTTP 요청 (`JwtAuthenticationFilter`):** 회의실 생성·조회·입장·퇴장 API 요청 시 `Authorization: Bearer` 헤더를 검증합니다.
+- **WebSocket 연결 (`StompHandler`):** 핸드셰이크(`/ws-stomp/**`) 이후 STOMP `CONNECT` 프레임이 인바운드 채널에 진입하는 시점에 네이티브 헤더의 JWT 유효성을 검증하여 비인가 사용자의 시그널링 채널 구독을 차단합니다.
+
+### 3-2. WebRTC 시그널링 및 P2P 연결 흐름
+*(여기에 시퀀스 다이어그램 이미지 삽입)*
+
+1. **입장 (`JOIN`):** 사용자가 `/sub/rooms/{roomId}` 구독을 완료한 뒤 입장 신호를 발행합니다.
+2. **미디어 협상 (`OFFER` / `ANSWER`):** 기존 참여자가 `RTCPeerConnection`을 생성해 SDP Offer를 전송하면, 신규 참여자가 이를 등록하고 코덱 및 미디어 규격을 맞춘 SDP Answer로 응답합니다.
+3. **네트워크 경로 탐색 (`ICE`):** STUN 서버(`stun.l.google.com`)를 통해 수집한 ICE Candidate를 비동기(Trickle ICE)로 교환하여 NAT 환경을 우회하는 최적의 P2P 경로를 연결합니다.
+
+---
+
+## 4. 주요 구현 기능
+
+| 기능 구분 | 상세 내용 |
+| :--- | :--- |
+| **사용자 인증** | 회원가입, 로그인, JWT 발급 및 Axios 인터셉터를 통한 토큰 자동 주입 |
+| **회의실 관리** | 회의실 개설(최대 인원 설정), 대기실 목록 조회, 입장·퇴장 상태 관리 및 전역 예외 처리(`@RestControllerAdvice`) |
+| **실시간 화상 통신** | `getUserMedia` 기반 로컬 미디어 스트림 제어(음소거, 카메라 On/Off) 및 상대방 원격 스트림 실시간 렌더링 |
+
+---
+
+## 5. 프론트엔드 설계 및 코드 구조화
+
+유지보수성과 가독성을 높이기 위해 UI 렌더링, 비즈니스 로직, 타입 정의, 스타일을 명확히 분리했습니다.
+
+```text
+src/
+├── api/          # Axios 인스턴스 및 JWT 요청 인터셉터 설정
+├── assets/style/ # 페이지별 독립 CSS 파일 관리
+├── hook/         # WebSocket 연결 및 RTCPeerConnection 수명주기를 캡슐화한 useWebRTC 커스텀 훅
+├── page/         # AuthPage, LobbyPage, RoomPage 화면 컴포넌트
+└── types/        # 백엔드 DTO 및 시그널링 메시지 규격 타입 정의 (auth, room, signaling)
