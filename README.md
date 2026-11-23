@@ -108,7 +108,7 @@ src/
 ├── hook/         # WebSocket 연결 및 RTCPeerConnection 수명주기를 캡슐화한 useWebRTC 커스텀 훅
 ├── page/         # AuthPage, LobbyPage, RoomPage 화면 컴포넌트
 └── types/        # 백엔드 DTO 및 시그널링 메시지 규격 타입 정의 (auth, room, signaling)
-
+```
 ---
 
 ## 6. 단계별 구현 로드맵
