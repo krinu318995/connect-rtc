@@ -20,7 +20,7 @@
 - **Language & Framework:** Java 21, Spring Boot 4.1.2
 - **Security & Auth:** Spring Security, JWT (jjwt)
 - **Real-time Signaling:** Spring WebSocket, STOMP, SockJS
-- **Database & ORM:** MySQL, Spring Data JPA
+- **Database & ORM:** MySQL, Spring Data JPA, Jasypt
 
 ### Frontend
 - **Language & Framework:** TypeScript, React 19, Vite
@@ -31,39 +31,53 @@
 
 ## 3. 시스템 아키텍처 및 핵심 동작 흐름
 
-*(여기에 시스템 아키텍처 다이어그램 이미지 삽입)*
-
 ### 3-1. 이중 계층 JWT 인증 구조
 - **HTTP 요청 (`JwtAuthenticationFilter`):** 회의실 생성·조회·입장·퇴장 API 요청 시 `Authorization: Bearer` 헤더를 검증합니다.
 - **WebSocket 연결 (`StompHandler`):** 핸드셰이크(`/ws-stomp/**`) 이후 STOMP `CONNECT` 프레임이 인바운드 채널에 진입하는 시점에 네이티브 헤더의 JWT 유효성을 검증하여 비인가 사용자의 시그널링 채널 구독을 차단합니다.
+- **클라이언트 라우트 가드 (`PrivateRoute` / `PublicRoute`):** 토큰 유무에 따른 경로 접근 제어를 적용해 미로그인 상태 및 로그아웃 직후 브라우저 뒤로가기를 통한 대기실·회의실 진입을 차단합니다.
 
 ### 3-2. WebRTC 시그널링 및 P2P 연결 흐름
-*(여기에 시퀀스 다이어그램 이미지 삽입)*
 
-1. **입장 (`JOIN`):** 사용자가 `/sub/rooms/{roomId}` 구독을 완료한 뒤 입장 신호를 발행합니다.
-2. **미디어 협상 (`OFFER` / `ANSWER`):** 기존 참여자가 `RTCPeerConnection`을 생성해 SDP Offer를 전송하면, 신규 참여자가 이를 등록하고 코덱 및 미디어 규격을 맞춘 SDP Answer로 응답합니다.
-3. **네트워크 경로 탐색 (`ICE`):** STUN 서버(`stun.l.google.com`)를 통해 수집한 ICE Candidate를 비동기(Trickle ICE)로 교환하여 NAT 환경을 우회하는 최적의 P2P 경로를 연결합니다.
+```mermaid
+sequenceDiagram
+    autonumber
+    actor UserA as 참여자 A (기존 입장)
+    participant Server as Spring Boot (STOMP & StompHandler)
+    actor UserB as 참여자 B (신규 입장)
 
----
+    Note over UserA, Server: 1. 참여자 A WebSocket 연결 및 방 구독
+    UserA->>Server: STOMP CONNECT (Authorization: Bearer JWT)
+    Server->>Server: StompHandler: JWT 유효성 검증
+    Server-->>UserA: STOMP CONNECTED
+    UserA->>Server: SUBSCRIBE /sub/rooms/{roomId}
 
-## 4. 주요 구현 기능
+    Note over UserB, Server: 2. 참여자 B 입장 및 JOIN 신호 발행
+    UserB->>Server: STOMP CONNECT (Authorization: Bearer JWT)
+    Server->>Server: StompHandler: JWT 유효성 검증
+    Server-->>UserB: STOMP CONNECTED
+    UserB->>Server: SUBSCRIBE /sub/rooms/{roomId}
+    UserB->>Server: PUBLISH /pub/signal/{roomId} (type: JOIN)
+    Server-->>UserA: 브로드캐스트 (type: JOIN, senderId: UserB)
 
-| 기능 구분 | 상세 내용 |
-| :--- | :--- |
-| **사용자 인증** | 회원가입, 로그인, JWT 발급 및 Axios 인터셉터를 통한 토큰 자동 주입 |
-| **회의실 관리** | 회의실 개설(최대 인원 설정), 대기실 목록 조회, 입장·퇴장 상태 관리 및 전역 예외 처리(`@RestControllerAdvice`) |
-| **실시간 화상 통신** | `getUserMedia` 기반 로컬 미디어 스트림 제어(음소거, 카메라 On/Off) 및 상대방 원격 스트림 실시간 렌더링 |
+    Note over UserA, UserB: 3. SDP Offer / Answer 미디어 협상
+    UserA->>UserA: RTCPeerConnection 생성 & createOffer()
+    UserA->>UserA: setLocalDescription(Offer)
+    UserA->>Server: PUBLISH /pub/signal/{roomId} (type: OFFER)
+    Server-->>UserB: 전달 (type: OFFER)
 
----
+    UserB->>UserB: RTCPeerConnection 생성 & setRemoteDescription(Offer)
+    UserB->>UserB: createAnswer() & setLocalDescription(Answer)
+    UserB->>Server: PUBLISH /pub/signal/{roomId} (type: ANSWER)
+    Server-->>UserA: 전달 (type: ANSWER)
+    UserA->>UserA: setRemoteDescription(Answer)
 
-## 5. 프론트엔드 설계 및 코드 구조화
+    Note over UserA, UserB: 4. ICE Candidate 교환 및 P2P 개통
+    par 비동기 네트워크 경로 탐색 (Trickle ICE)
+        UserA->>Server: PUBLISH (type: ICE Candidate)
+        Server-->>UserB: 전달 (type: ICE) → addIceCandidate()
+    and
+        UserB->>Server: PUBLISH (type: ICE Candidate)
+        Server-->>UserA: 전달 (type: ICE) → addIceCandidate()
+    end
 
-유지보수성과 가독성을 높이기 위해 UI 렌더링, 비즈니스 로직, 타입 정의, 스타일을 명확히 분리했습니다.
-
-```text
-src/
-├── api/          # Axios 인스턴스 및 JWT 요청 인터셉터 설정
-├── assets/style/ # 페이지별 독립 CSS 파일 관리
-├── hook/         # WebSocket 연결 및 RTCPeerConnection 수명주기를 캡슐화한 useWebRTC 커스텀 훅
-├── page/         # AuthPage, LobbyPage, RoomPage 화면 컴포넌트
-└── types/        # 백엔드 DTO 및 시그널링 메시지 규격 타입 정의 (auth, room, signaling)
+    UserA<==>>UserB: WebRTC P2P 직접 미디어 스트림 송수신 (ontrack)
