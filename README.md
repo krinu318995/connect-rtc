@@ -80,4 +80,4 @@ sequenceDiagram
         Server-->>UserA: 전달 (type: ICE) → addIceCandidate()
     end
 
-    UserA<==>>UserB: WebRTC P2P 직접 미디어 스트림 송수신 (ontrack)
+    UserA<<->>UserB: WebRTC P2P 직접 미디어 스트림 송수신 (ontrack)
