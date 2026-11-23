@@ -1,0 +1,116 @@
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: none;
+  background-color: #09090b;
+}
+
+.auth-container {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #09090b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", sans-serif;
+}
+
+.auth-box {
+  width: 100%;
+  max-width: 380px;
+  padding: 36px 32px;
+  background-color: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.auth-title {
+  margin: 0 0 4px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fafafa;
+  letter-spacing: -0.02em;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-input {
+  height: 44px;
+  padding: 0 14px;
+  background-color: #09090b;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #f4f4f5;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.auth-input::placeholder {
+  color: #71717a;
+}
+
+.auth-input:focus {
+  border-color: #3b82f6;
+}
+
+.auth-submit-btn {
+  height: 44px;
+  margin-top: 4px;
+  background-color: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.auth-submit-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.auth-error {
+  margin: 0;
+  font-size: 13px;
+  color: #f87171;
+  text-align: center;
+}
+
+.auth-switch-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.auth-toggle-btn {
+  background: transparent;
+  border: none;
+  color: #a1a1aa;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.2s ease;
+}
+
+.auth-toggle-btn:hover {
+  color: #60a5fa;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}

@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -36,7 +38,8 @@ public class RoomParticipants {
 
     @Column(name = "role", length = 20, nullable = false)
     @Builder.Default
-    private String role = "MEMBER";
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.MEMBER;
 
     @Column(name = "is_active")
     @Builder.Default
@@ -48,6 +51,10 @@ public class RoomParticipants {
     @Column(name = "joined_at", nullable = false, insertable = false, updatable = false)
     private LocalDateTime joinedAt;
 
-    @Column(name = "left_at", insertable = false)
+    @Column(name = "left_at")
     private LocalDateTime leftAt;
+
+    public enum Role {
+        HOST, MEMBER
+    }
 }

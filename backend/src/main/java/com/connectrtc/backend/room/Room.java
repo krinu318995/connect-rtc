@@ -2,10 +2,10 @@ package com.connectrtc.backend.room;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.validator.constraints.Normalized;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -32,10 +32,11 @@ public class Room {
 
     @Column(name = "room_type", length = 20, nullable = false)
     @Builder.Default
-    private String roomType = "GROUP";
+    @Enumerated(EnumType.STRING)
+    private RoomType roomType = RoomType.GROUP;
 
     @Column(name = "host_id", nullable = false)
-    private int hostId;
+    private Long hostId;
 
     @Column(name = "max_participants", nullable = false)
     @Builder.Default
@@ -43,7 +44,8 @@ public class Room {
 
     @Column(name = "status", length = 20, nullable = false)
     @Builder.Default
-    private String status = "OPEN";
+    @Enumerated(EnumType.STRING)
+    private RoomStatus status = RoomStatus.OPEN;
 
     @Column(name = "last_message_at", insertable = false)
     private LocalDateTime lastMessageAt;
@@ -53,5 +55,13 @@ public class Room {
 
     public void updateLastMessageAt(LocalDateTime time) {
         this.lastMessageAt = time;
+    }
+
+    public enum RoomType {
+        GROUP, DIRECT
+    }
+
+    public enum RoomStatus {
+        OPEN, CLOSED
     }
 }

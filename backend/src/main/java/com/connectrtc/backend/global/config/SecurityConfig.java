@@ -41,7 +41,8 @@ public class SecurityConfig {
                         SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                         // 회원가입, 로그인, WebSocket 초기 핸드셰이크 경로는 인증 없이 허용
-                        auth -> auth.requestMatchers("/api/users/signup", "/api/users/login", "/ws/*").permitAll()
+                        auth -> auth.requestMatchers("/api/users/signup", "/api/users/login", "/ws-stomp/**")
+                                .permitAll()
                                 .anyRequest().authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();

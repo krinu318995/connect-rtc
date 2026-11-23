@@ -1,0 +1,251 @@
+.Lobby-containter {
+  min-height: 100vh;
+  background-color: #09090b;
+  color: #f4f4f5;
+  padding: 32px 24px;
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", sans-serif;
+}
+
+.Lobby-header {
+  width: 100%;
+  max-width: 840px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.Lobby-header > h2 {
+  margin: 0;
+  text-align: left;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #fafafa;
+}
+
+.lobby-logout-btn {
+  align-self: flex-end;
+  margin-top: -48px;
+  padding: 8px 16px;
+  background-color: transparent;
+  color: #a1a1aa;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lobby-logout-btn:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+}
+
+/* 회의실 생성 카드 영역 */
+.lobby-create-room {
+  display: flex;
+  gap: 12px;
+  padding: 20px;
+  background-color: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+
+.lobby-title-input {
+  flex: 1;
+  height: 44px;
+  padding: 0 16px;
+  background-color: #09090b;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #f4f4f5;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.lobby-title-input::placeholder {
+  color: #71717a;
+}
+
+.lobby-title-input:focus {
+  border-color: #3b82f6;
+}
+
+/* 커스텀 드롭다운 (5개 표시 + 스크롤) */
+.lobby-custom-select {
+  position: relative;
+  min-width: 130px;
+}
+
+.lobby-select-trigger {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  background-color: #09090b;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #e4e4e7;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.lobby-select-trigger:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.lobby-select-arrow {
+  font-size: 10px;
+  color: #a1a1aa;
+}
+
+.lobby-select-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 100%;
+  max-height: 180px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background-color: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  z-index: 50;
+  box-sizing: border-box;
+}
+
+.lobby-select-menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lobby-select-menu::-webkit-scrollbar-thumb {
+  background-color: #3f3f46;
+  border-radius: 3px;
+}
+
+.lobby-select-option {
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #d4d4d8;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.lobby-select-option:hover {
+  background-color: #27272a;
+}
+
+.lobby-select-option.selected {
+  background-color: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.lobby-create-btn {
+  height: 44px;
+  padding: 0 22px;
+  background-color: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+}
+
+.lobby-create-btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* 회의실 리스트 */
+.lobby-empty-text {
+  text-align: center;
+  padding: 60px 0;
+  color: #71717a;
+  font-size: 14px;
+  background-color: #18181b;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+}
+
+.lobby-room-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lobby-room-item {
+  background-color: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 18px 24px;
+  transition:
+    border-color 0.2s,
+    transform 0.15s;
+}
+
+.lobby-room-item:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.lobby-room-item > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.lobby-room-item strong {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fafafa;
+  flex: 1;
+}
+
+.lobby-room-meta {
+  font-size: 13px;
+  color: #a1a1aa;
+  background-color: #27272a;
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+
+.lobby-join-btn {
+  padding: 9px 20px;
+  background-color: #27272a;
+  color: #f4f4f5;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lobby-join-btn:hover:not(:disabled) {
+  background-color: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+
+.lobby-join-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
