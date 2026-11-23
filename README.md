@@ -84,7 +84,7 @@ sequenceDiagram
 ```
 
 #### 1. 입장 (JOIN): 사용자가 /sub/rooms/{roomId} 구독을 완료한 뒤 입장 신호를 발행합니다.
-### 2. 미디어 협상 (OFFER / ANSWER): 기존 참여자가 RTCPeerConnection을 생성해 SDP Offer를 전송하면, 신규 참여자가 이를 등록하고 코덱 및 미디어 규격을 맞춘 SDP Answer로 응답합니다.
-### 3. 네트워크 경로 탐색 (ICE): STUN 서버(stun.l.google.com)를 통해 수집한 ICE Candidate를 비동기(Trickle ICE)로 교환하여 NAT 환경을 우회하는 최적의 P2P 경로를 연결합니다.
+#### 2. 미디어 협상 (OFFER / ANSWER): 기존 참여자가 RTCPeerConnection을 생성해 SDP Offer를 전송하면, 신규 참여자가 이를 등록하고 코덱 및 미디어 규격을 맞춘 SDP Answer로 응답합니다.
+#### 3. 네트워크 경로 탐색 (ICE): STUN 서버(stun.l.google.com)를 통해 수집한 ICE Candidate를 비동기(Trickle ICE)로 교환하여 NAT 환경을 우회하는 최적의 P2P 경로를 연결합니다.
 ---
 
