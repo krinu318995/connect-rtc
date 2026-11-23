@@ -87,7 +87,8 @@ sequenceDiagram
 #### 2. 미디어 협상 (OFFER / ANSWER): 기존 참여자가 RTCPeerConnection을 생성해 SDP Offer를 전송하면, 신규 참여자가 이를 등록하고 코덱 및 미디어 규격을 맞춘 SDP Answer로 응답합니다.
 #### 3. 네트워크 경로 탐색 (ICE): STUN 서버(stun.l.google.com)를 통해 수집한 ICE Candidate를 비동기(Trickle ICE)로 교환하여 NAT 환경을 우회하는 최적의 P2P 경로를 연결합니다.
 ---
-4. 주요 구현 기능기능 구분상세 내용사용자 인증회원가입, 로그인, JWT 발급, Axios 인터셉터 토큰 자동 주입 및 PrivateRoute 기반 접근 제어회의실 관리회의실 개설(최대 인원 커스텀 드롭다운 설정), 대기실 목록 조회, 입장·퇴장 상태 관리 및 전역 예외 처리(@RestControllerAdvice)실시간 화상 통신getUserMedia 기반 로컬 미디어 스트림 제어(음소거, 카메라 On/Off), 상대방 닉네임 동적 바인딩 및 원격 스트림 실시간 렌더링5. 프론트엔드 설계 및 코드 구조화유지보수성과 가독성을 높이기 위해 UI 렌더링, 비즈니스 로직, 타입 정의, 스타일을 명확히 분리했습니다.Plaintextsrc/
+## 4. 주요 구현 기능
+기능 구분상세 내용사용자 인증회원가입, 로그인, JWT 발급, Axios 인터셉터 토큰 자동 주입 및 PrivateRoute 기반 접근 제어회의실 관리회의실 개설(최대 인원 커스텀 드롭다운 설정), 대기실 목록 조회, 입장·퇴장 상태 관리 및 전역 예외 처리(@RestControllerAdvice)실시간 화상 통신getUserMedia 기반 로컬 미디어 스트림 제어(음소거, 카메라 On/Off), 상대방 닉네임 동적 바인딩 및 원격 스트림 실시간 렌더링5. 프론트엔드 설계 및 코드 구조화유지보수성과 가독성을 높이기 위해 UI 렌더링, 비즈니스 로직, 타입 정의, 스타일을 명확히 분리했습니다.Plaintextsrc/
 ├── api/          # Axios 인스턴스 및 JWT 요청 인터셉터 설정
 ├── assets/style/ # 다크 테마 기반 페이지별 독립 CSS 파일 관리
 ├── hook/         # WebSocket 연결 및 RTCPeerConnection 수명주기를 캡슐화한 useWebRTC 커스텀 훅
