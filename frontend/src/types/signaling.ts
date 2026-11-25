@@ -7,3 +7,14 @@ export interface SignalingMessage {
   receiverId?: number | null;
   data?: unknown;
 }
+
+export type ChatMessageType = "TEXT" | "IMAGE" | "FILE" | "SYSTEM";
+
+export interface ChatMessage {
+  messageId?: number;
+  roomId: string;
+  senderId: number;
+  messageType: ChatMessageType;
+  content: string;
+  createdAt?: string;
+}

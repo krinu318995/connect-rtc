@@ -21,9 +21,21 @@ public class RoomDto {
 
         private Room.RoomType roomType;
 
+        private Room.AccessType accessType;
+
+        private String password;
+
         @Min(value = 1)
-        @Max(value = 50, message = "최대 인원은 50명 입니다.")
+        @Max(value = 20, message = "최대 인원은 20명 입니다.")
         private Integer maxParticipants;
+
+    }
+
+    @Getter
+    @NoArgsConstructor
+    public static class JoinRequest {
+        private String password;
+        private String inviteCode;
 
     }
 
@@ -35,6 +47,9 @@ public class RoomDto {
         private String roomId;
         private String title;
         private Room.RoomType roomType;
+        private Room.AccessType accessType;
+        private String inviteCode;
+        private boolean hasPassword;
         private Long hostId;
         private int maxParticipants;
         private Long currentParticipants;
@@ -46,6 +61,9 @@ public class RoomDto {
                     .roomId(room.getRoomId())
                     .title(room.getTitle())
                     .roomType(room.getRoomType())
+                    .accessType(room.getAccessType())
+                    .hasPassword(room.getAccessType() == Room.AccessType.PASSWORD)
+                    .inviteCode(room.getInviteCode())
                     .hostId(room.getHostId())
                     .maxParticipants(room.getMaxParticipants())
                     .currentParticipants(currentParticipants)

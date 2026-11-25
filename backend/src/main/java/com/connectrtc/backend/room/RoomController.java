@@ -41,9 +41,10 @@ public class RoomController {
 
     @PostMapping("/{roomId}/join")
     public ResponseEntity<RoomDto.Response> joinRoom(@AuthenticationPrincipal Long userId,
-            @PathVariable String roomId) {
+            @PathVariable String roomId,
+            @RequestBody(required = false) RoomDto.JoinRequest joinRequest) {
 
-        return ResponseEntity.ok(roomService.joinRoom(roomId, userId));
+        return ResponseEntity.ok(roomService.joinRoom(roomId, userId, joinRequest));
     }
 
     @PostMapping("/{roomId}/leave")

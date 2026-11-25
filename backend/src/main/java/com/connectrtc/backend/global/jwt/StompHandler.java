@@ -1,5 +1,7 @@
 package com.connectrtc.backend.global.jwt;
 
+import java.util.Map;
+
 import org.jspecify.annotations.Nullable;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -38,7 +40,24 @@ public class StompHandler implements ChannelInterceptor {
                 throw new AccessDeniedException("유효하지 않은 토큰입니다.");
             }
 
+            Long userId = jwtProvider.getUserId(token);
+            Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
+            if (sessionAttributes != null && userId != null) {
+                sessionAttributes.put("userId", userId);
+            }
+
             log.info("STOMP JWT 인증 성공");
+
+        } else if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+            String destination = accessor.getDestination();
+
+            if (destination != null && destination.startsWith("/sub/rooms/")) {
+                String roomId = destination.substring("/sub/rooms/".length());
+                Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
+                if (sessionAttributes != null) {
+                    sessionAttributes.put("roomId", roomId);
+                }
+            }
         }
 
         return message;

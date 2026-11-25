@@ -35,6 +35,17 @@ public class Room {
     @Enumerated(EnumType.STRING)
     private RoomType roomType = RoomType.GROUP;
 
+    @Column(name = "access_type", length = 20, nullable = false)
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private AccessType accessType = AccessType.PUBLIC;
+
+    @Column(name = "password", length = 255)
+    private String password;
+
+    @Column(name = "invite_code", length = 36, unique = true)
+    private String inviteCode;
+
     @Column(name = "host_id", nullable = false)
     private Long hostId;
 
@@ -63,5 +74,10 @@ public class Room {
 
     public enum RoomStatus {
         OPEN, CLOSED
+    }
+
+    public enum AccessType {
+        PUBLIC, PASSWORD, INVITE_ONLY
+
     }
 }

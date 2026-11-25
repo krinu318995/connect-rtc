@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -35,12 +37,17 @@ public class ChatMessage {
     private Long senderId;
 
     @Builder.Default
+    @Enumerated(EnumType.STRING)
     @Column(name = "message_type", length = 20, nullable = false)
-    private String messageType = "TEXT"; // TEXT, IMAGE, FILE, SYSTEM
+    private MessageType messageType = MessageType.TEXT; // TEXT, IMAGE, FILE, SYSTEM
 
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    public enum MessageType {
+        TEXT, IMAGE, FILE, SYSTEM
+    }
 }
