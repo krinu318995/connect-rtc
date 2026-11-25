@@ -168,8 +168,8 @@ src/
 
 ### 4. React StrictMode 환경에서 로컬 미디어 스트림 미렌더링 문제
 
-- useRef로만 스트림을 보관할 경우 비동기 스트림 할당 시 리렌더링이 발생하지 않는 문제를 해결하기 위해 localStream 상태를 병행 관리하도록 개선한 내용
+- useRef로만 스트림을 보관할 경우 비동기 스트림 할당 시 리렌더링이 발생하지 않는 문제를 해결하기 위해 localStream 상태를 병행 관리하도록 수정
 
 ### 5. JPA Enum 매핑 불일치(SchemaManagementException) 해결
 
-- ChatMessage 엔티티에 @Enumerated(EnumType.STRING)을 명시해 DB VARCHAR 컬럼과 타입을 일치시킨 내용
+- ChatMessage 엔티티에 @Enumerated(EnumType.STRING)을 명시해 DB VARCHAR 컬럼과 타입을 일치
